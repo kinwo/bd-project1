@@ -12,7 +12,8 @@ const SHA256 = require('crypto-js/sha256');
 const BlockClass = require('./block.js');
 const bitcoinMessage = require('bitcoinjs-message');
 
-const MesgTimeLimitMS = 5 * 60 * 1000;
+// 5 mins
+const MesgTimeLimitSec = 5 * 60;
 
 class Blockchain {
   /**
@@ -135,8 +136,10 @@ class Blockchain {
 
         // Check if the time elapsed is less than 5 minutes
         const elapsedTime = currentTime - time;
-        if (elapsedTime > MesgTimeLimitMS) {
-          throw new Error('Rejects: Time elapsed more than 5 mins');
+        if (elapsedTime > MesgTimeLimitSec) {
+          throw new Error(
+            `Rejected: Exceed time limit of more than ${MesgTimeLimitSec} secs`
+          );
         }
 
         // Veify the message
