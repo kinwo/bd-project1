@@ -71,10 +71,17 @@ class Blockchain {
         // update block attributes
         block.time = new Date().getTime().toString().slice(0, -3);
         block.height = self.chain.length;
-        block.hash = SHA256(JSON.stringify(block)).toString();
-
         if (!block.isGenesisBlock()) {
           block.previousBlockHash = self.chain[self.chain.length - 1].hash;
+        }
+
+        block.hash = SHA256(JSON.stringify(block)).toString();
+
+        // validate chain
+        const errorLogs = await self.validateChain();
+        if (errorLogs.length > 0) {
+          console.error(errorLogs);
+          throw new Error('Invalid blockchain');
         }
 
         // add to blockchain
@@ -156,7 +163,7 @@ class Blockchain {
         const block = new BlockClass.Block(data);
 
         // Add to chain
-        self._addBlock(block);
+        await self._addBlock(block);
 
         resolve(block);
       } catch (error) {
@@ -231,7 +238,7 @@ class Blockchain {
           resolve(stars);
         });
       } catch (error) {
-        console.info(error);
+        console.error(error);
         reject(error);
       }
     });
@@ -247,12 +254,14 @@ class Blockchain {
     let self = this;
     let errorLog = [];
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         for (let i = 0; i < self.chain.length; i++) {
           const block = self.chain[i];
 
-          if (!block.validate()) {
+          const isValid = await block.validate();
+          if (!isValid) {
+            console.error(`Invalid block ${i}`);
             errorLog.push(i);
           } else {
             const nextBlockIndex = i + 1;
@@ -260,6 +269,9 @@ class Blockchain {
               const nextBlock = self.chain[i + 1];
               const previousHashOfNextBlock = nextBlock.previousBlockHash;
               if (block.hash != previousHashOfNextBlock) {
+                console.error(
+                  `Block ${i + 1} previousHashOfNextBlock is not matched`
+                );
                 errorLog.push(i);
               }
             }
