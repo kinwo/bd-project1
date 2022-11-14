@@ -42,12 +42,12 @@ class Block {
         const storedHash = self.hash;
 
         // Recalculate the hash of the Block
-        const block = JSON.parse(JSON.stringify(this));
-        block.hash = '';
-        const calHash = SHA256(JSON.stringify(block)).toString();
+        let clonedBlock = { ...self };
+        clonedBlock.hash = null;
+        const newHash = SHA256(JSON.stringify(clonedBlock)).toString();
 
-        // Comparing if the hashes changed
-        const isValid = calHash === storedHash;
+        // Comparing if the hash changed
+        const isValid = newHash === storedHash;
 
         // Returning the Block is not valid
         // Returning the Block is valid
