@@ -213,8 +213,6 @@ class Blockchain {
     let self = this;
     return new Promise((resolve, reject) => {
       try {
-        console.info(`address=${address}`);
-
         let allPromises = [];
         for (let i = 0; i < self.chain.length; i++) {
           const myBlock = self.chain[i];
@@ -230,7 +228,6 @@ class Blockchain {
 
         Promise.all(allPromises).then((result) => {
           const stars = result.filter((value) => value != null);
-          console.info(stars);
           resolve(stars);
         });
       } catch (error) {

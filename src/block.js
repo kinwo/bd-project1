@@ -53,7 +53,7 @@ class Block {
         // Returning the Block is valid
         resolve(isValid);
       } catch (error) {
-        console.info(`Unknown error caught: ${error.message}`);
+        console.error(`Unknown error caught: ${error.message}`);
         reject(error);
       }
     });
@@ -93,7 +93,7 @@ class Block {
         // Resolve with the data if the object isn't the Genesis block
         resolve(jsonObj);
       } catch (error) {
-        console.info(`Unknown error caught: ${error.message}`);
+        console.error(`Unknown error caught: ${error.message}`);
         reject(error);
       }
     });
